@@ -124,12 +124,28 @@ rounding (differences below 1% in all MAUT global utilities):
 | CR (Env.)       | 0.0084   | 0.0084    | 0.0000     |
 | CR (Logistical) | 0.0036   | 0.0036    | 0.0000     |
 
-Note on the pairwise matrices in `data/pairwise_*.csv`: these are
+**Note on the pairwise matrices** (`data/pairwise_*.csv`): these are
 Saaty-scale aggregated matrices consistent with the published weights.
 Individual expert matrices (n = 6) are not redistributed here for
 respondent confidentiality, following standard practice in AHP studies.
 The aggregated matrices reproduce the published weights within the
 precision allowed by Saaty's 1-9 integer scale.
+
+**Note on the utility values** (`data/utility_values.csv`): the AHP
+weights are derived from elicitation with a panel of six experts
+(semi-structured interviews on Saaty's 1-9 scale). The MAUT utility
+values, in contrast, are author-assigned scenario-based scores derived
+from the qualitative descriptions of Scenarios A, B, and C (see Section
+4.8.1 of Silva, 2026). The scenarios themselves are anchored to
+climatic efficiency (CE) ranges from Wollmann et al. (2013), and
+within each scenario each utility reflects the author's interpretation
+of the corresponding scenario profile, applying the linear scaling
+logic ("more is better" or "less is better") per Clemen & Reilly
+(2001). This is an *exploratory MAUT modeling* approach (sensu Bankes,
+1993), suitable for problems characterized by primary data scarcity.
+The `scenario_anchor` column in `utility_values.csv` documents which
+aspect of each scenario profile each utility reflects. Future work
+should refine these utilities through primary measurement.
 
 ---
 
