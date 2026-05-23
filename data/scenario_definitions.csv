@@ -1,0 +1,4 @@
+scenario,label,CE_threshold,reference_municipalities,cost_profile,storage_profile
+A,Optimistic,CE > 0.60,Erechim (0.61),Optimized operational costs,Complete storage infrastructure
+B,Moderate,0.40 <= CE <= 0.59,Passo Fundo (0.56); Veranopolis (0.52); Ijui (0.43),Standard production costs,Partial silo access
+C,Pessimistic,CE < 0.39,Sao Gabriel (0.31); Sao Borja (0.36); Santa Maria (0.38),High chemical input dependency,Severe logistical constraints

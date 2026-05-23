@@ -1,0 +1,13 @@
+subcriterion,scenario_A,scenario_B,scenario_C,direction,data_source,utility_method
+Production Cost,0.90,0.60,0.20,less_is_better,CONAB cost series,Linear normalization on cost range
+Expected Profitability,0.95,0.50,0.10,more_is_better,IBGE/CONAB margins,Linear normalization on profit range
+Financing Needs,0.80,0.60,0.30,less_is_better,Banco Central rural credit,Ordinal expert conversion
+Expected Productivity,0.90,0.55,0.15,more_is_better,IBGE yield + Wollmann CE,Climatic-scaled yield ratio
+Crop Compatibility,0.85,0.70,0.40,more_is_better,Expert judgment,Ordinal expert conversion
+Soil Impact,0.75,0.60,0.30,less_is_better,Expert judgment,Ordinal expert conversion
+Efficient Land Use,1.00,0.80,0.50,more_is_better,IBGE area utilization,Linear normalization on area-use ratio
+Carbon Footprint,0.70,0.50,0.20,less_is_better,Lit. emission factors,Linear normalization on emission range
+Chemical Input Dependency,0.60,0.40,0.10,less_is_better,Expert judgment,Ordinal expert conversion
+Storage Infrastructure,0.90,0.40,0.10,more_is_better,CONAB silo capacity,Linear normalization on capacity ratio
+Production Flow,0.85,0.60,0.20,more_is_better,Expert + logistics data,Ordinal expert conversion
+Market Access,0.90,0.70,0.40,more_is_better,Expert judgment,Ordinal expert conversion

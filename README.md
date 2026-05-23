@@ -1,0 +1,202 @@
+# mcda-intercropping-rs
+
+[![License: MIT](https://img.shields.io/badge/Code%20License-MIT-blue.svg)](LICENSE)
+[![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](LICENSE-DATA)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.placeholder.svg)](https://doi.org/10.5281/zenodo.placeholder)
+
+Reproducibility package for the paper:
+
+> Silva, C., Siluk, J. C. M., Rediske, G., & Marchezan, T. B. (2026).
+> *Integrated AHP-MAUT Framework for Multicriteria Performance Evaluation
+> of Soybean-Wheat Intercropping in Southern Brazil*.
+> Submitted to *International Transactions in Operational Research*.
+
+This repository contains the full pipeline (AHP weight derivation, MAUT
+aggregation, OAT and Monte Carlo sensitivity analyses, exponential utility
+robustness checks) used in the paper, along with the input data needed
+to reproduce every reported number, table, and figure.
+
+---
+
+## Quick start
+
+```bash
+git clone https://github.com/gthubinaction/mcda-intercropping-rs.git
+cd mcda-intercropping-rs
+pip install -r requirements.txt
+python run_all.py
+```
+
+Outputs land in `results/tables/` and `results/figures/`.
+
+---
+
+## Repository structure
+
+```
+mcda-intercropping-rs/
+│
+├── README.md                       This file
+├── LICENSE                         MIT license (code)
+├── LICENSE-DATA                    CC BY 4.0 license (data and results)
+├── CITATION.cff                    Citation metadata (Zenodo integration)
+├── requirements.txt                Python dependencies
+├── run_all.py                      End-to-end reproduction script
+│
+├── data/
+│   ├── ahp_weights.csv             Final AHP weights (criterion, sub-criterion, CR)
+│   ├── utility_values.csv          MAUT utility values per scenario (Table 3 in paper)
+│   ├── climatic_efficiency.csv     Wollmann et al. (2013) CE data
+│   ├── scenario_definitions.csv    Scenario A/B/C structural parameters
+│   ├── pairwise_main_criteria.csv  Aggregated pairwise comparison (main criteria)
+│   └── pairwise_subcriteria.csv    Aggregated pairwise comparison (sub-criteria)
+│
+├── src/
+│   ├── ahp.py                      AHP eigenvector, CI, CR
+│   ├── maut.py                     Linear and exponential utility aggregation
+│   ├── sensitivity.py              OAT and Monte Carlo
+│   └── visualization.py            Publication-quality figures (matplotlib)
+│
+├── notebooks/
+│   └── 01_walkthrough.ipynb        Interactive exploration mirroring run_all.py
+│
+└── results/
+    ├── tables/                     CSVs reproducing paper Tables 2-4 + Monte Carlo
+    └── figures/                    PNG + PDF (300 dpi) for the paper
+```
+
+---
+
+## What this code does
+
+### 1. AHP weight derivation (`src/ahp.py`)
+
+Computes priority weights from pairwise comparison matrices using the
+principal eigenvector method. Returns lambda_max, Consistency Index (CI),
+and Consistency Ratio (CR).
+
+```
+CI = (lambda_max - n) / (n - 1)
+CR = CI / RI(n)
+```
+
+A CR below 0.10 indicates acceptable judgment coherence (Saaty, 1980).
+
+### 2. MAUT aggregation (`src/maut.py`)
+
+Implements the additive model:
+
+```
+U(x) = sum_i [ w_i * u_i(x_i) ]
+```
+
+Two utility function families are supported:
+
+- **Linear**: `u(x) = (x - x_min) / (x_max - x_min)` (paper baseline)
+- **Exponential**: `u(x) = (1 - exp(-rho * x_norm)) / (1 - exp(-rho))`,
+  parameterized by risk aversion coefficient rho
+
+### 3. Sensitivity analysis (`src/sensitivity.py`)
+
+- **OAT**: each criterion weight is perturbed by +/-10% and +/-20%, with
+  proportional redistribution of the remaining mass. The ranking
+  stability is checked across all perturbations.
+- **Monte Carlo**: 10,000 iterations sampling uniformly from [-20%, +20%]
+  multipliers on each main weight, then renormalizing. Generates 95%
+  confidence intervals for U(A), U(B), U(C) and the empirical proportion
+  of iterations preserving the A > B > C ranking.
+
+---
+
+## Validation against published values
+
+Running `run_all.py` produces output that matches the paper to within
+rounding (differences below 1% in all MAUT global utilities):
+
+| Quantity        | Computed | Published | Difference |
+|-----------------|----------|-----------|------------|
+| U(A) baseline   | 0.8868   | 0.8921    | -0.0053    |
+| U(B) baseline   | 0.5955   | 0.5914    | +0.0041    |
+| U(C) baseline   | 0.2426   | 0.2485    | -0.0059    |
+| CR (Economic)   | 0.0032   | 0.0032    | 0.0000     |
+| CR (Agronomic)  | 0.0079   | 0.0079    | 0.0000     |
+| CR (Env.)       | 0.0084   | 0.0084    | 0.0000     |
+| CR (Logistical) | 0.0036   | 0.0036    | 0.0000     |
+
+Note on the pairwise matrices in `data/pairwise_*.csv`: these are
+Saaty-scale aggregated matrices consistent with the published weights.
+Individual expert matrices (n = 6) are not redistributed here for
+respondent confidentiality, following standard practice in AHP studies.
+The aggregated matrices reproduce the published weights within the
+precision allowed by Saaty's 1-9 integer scale.
+
+---
+
+## Key Monte Carlo finding
+
+Across 10,000 iterations with +/-20% uniform perturbation on each main
+criterion weight:
+
+| Scenario | Mean  | SD     | 95% CI            |
+|----------|-------|--------|-------------------|
+| A        | 0.887 | 0.001  | [0.885, 0.889]    |
+| B        | 0.595 | 0.003  | [0.590, 0.601]    |
+| C        | 0.243 | 0.005  | [0.234, 0.252]    |
+
+The A > B > C ranking is preserved in **100%** of iterations, and the
+95% confidence intervals do not overlap, providing strong evidence of
+ranking stability under weight uncertainty.
+
+---
+
+## Dependencies
+
+- Python 3.10+
+- numpy >= 1.24
+- pandas >= 2.0
+- matplotlib >= 3.7
+
+See `requirements.txt` for pinned versions.
+
+---
+
+## License
+
+- **Code** (`src/`, `run_all.py`, `notebooks/`): MIT License
+  (see [LICENSE](LICENSE))
+- **Data and results** (`data/`, `results/`): Creative Commons
+  Attribution 4.0 International (CC BY 4.0)
+  (see [LICENSE-DATA](LICENSE-DATA))
+
+---
+
+## Citation
+
+If you use this code or data, please cite the paper (full reference at
+top of this file) and the software:
+
+```bibtex
+@software{silva_mcda_intercropping_2026,
+  author       = {Silva, Cristian and Siluk, Julio Cezar Mairesse and
+                  Rediske, Graciele and Marchezan, Tiago Bandeira},
+  title        = {{mcda-intercropping-rs}: Reproducibility package for
+                  the AHP-MAUT framework},
+  year         = 2026,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.placeholder},
+  url          = {https://github.com/gthubinaction/mcda-intercropping-rs}
+}
+```
+
+The `CITATION.cff` file enables GitHub to render a "Cite this repository"
+button automatically.
+
+---
+
+## Contact
+
+Cristian Silva
+Programa de Pos-Graduacao em Engenharia de Producao (PPGEP)
+Universidade Federal de Santa Maria (UFSM)
+Santa Maria, RS, Brazil

@@ -1,0 +1,5 @@
+criterion,Economic,Agronomic,Environmental,Logistical
+Economic,1,2,2,3
+Agronomic,0.5,1,1,2
+Environmental,0.5,1,1,1
+Logistical,0.3333,0.5,1,1
