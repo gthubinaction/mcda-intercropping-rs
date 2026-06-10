@@ -4,8 +4,9 @@ run_all.py
 End-to-end reproduction script.
 
 Validates AHP weights from pairwise matrices against published values,
-computes MAUT baseline and exponential utility variants, runs OAT and
-Monte Carlo sensitivity analyses, and saves all results to results/.
+computes MAUT baseline and exponential utility variants, runs OAT, weight
+Monte Carlo and utility Monte Carlo sensitivity analyses, and saves all
+results to results/.
 
 Run from project root:
     python run_all.py
@@ -122,7 +123,7 @@ def main():
     print(oat[cols].round(4).to_string(index=False))
     oat.to_csv(TABLES_DIR / "oat_sensitivity.csv", index=False)
 
-    # Monte Carlo
+    # Monte Carlo (weights)
     print(f"\n{'='*60}")
     print("Monte Carlo Simulation (10,000 iterations, +/- 20%)")
     print(f"{'='*60}")
@@ -167,7 +168,7 @@ def main():
           f"{100 * umc_20['ranking_preserved'].mean():.2f}%")
     umc_20.to_csv(TABLES_DIR / "utility_monte_carlo_20pct_samples.csv", index=False)
     umc_20_summary.to_csv(TABLES_DIR / "utility_monte_carlo_20pct_summary.csv", index=False)
-    
+
     # Figures
     print(f"\n{'='*60}")
     print("Generating figures")
