@@ -229,3 +229,44 @@ def summarize_monte_carlo(samples: pd.DataFrame,
             "max": values.max(),
         })
     return pd.DataFrame(rows)
+
+def utility_monte_carlo(final_weights: np.ndarray,
+                        utility_matrix: np.ndarray,
+                        n_iterations: int = 10000,
+                        perturbation_range: float = 0.10,
+                        random_seed: int = 42) -> pd.DataFrame:
+    """
+    Monte Carlo sensitivity analysis on the MAUT utility values.
+    Complements monte_carlo_simulation() (which perturbs criterion weights)
+    by stress-testing the author-assigned utility matrix. Each utility value
+    is multiplied by an independent uniform factor in
+    [1 - perturbation_range, 1 + perturbation_range], clipped to [0, 1].
+    Final weights are held fixed at their empirically grounded AHP values.
+    """
+    rng = np.random.default_rng(random_seed)
+    n_sub, n_scenarios = utility_matrix.shape
+    scenario_labels = [f"U_{chr(65 + i)}" for i in range(n_scenarios)]
+
+    base_utilities = np.array([
+        global_utility(final_weights, utility_matrix[:, s])
+        for s in range(n_scenarios)
+    ])
+    base_ranking = tuple(np.argsort(-base_utilities))
+
+    lo, hi = 1 - perturbation_range, 1 + perturbation_range
+    records = []
+    for iteration in range(n_iterations):
+        multipliers = rng.uniform(low=lo, high=hi, size=(n_sub, n_scenarios))
+        perturbed = np.clip(utility_matrix * multipliers, 0.0, 1.0)
+        utilities = np.array([
+            global_utility(final_weights, perturbed[:, s])
+            for s in range(n_scenarios)
+        ])
+        ranking = tuple(np.argsort(-utilities))
+        record = {"iteration": iteration}
+        for label, u in zip(scenario_labels, utilities):
+            record[label] = u
+        record["ranking_preserved"] = (ranking == base_ranking)
+        records.append(record)
+
+    return pd.DataFrame(records)
