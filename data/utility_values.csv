@@ -2,7 +2,7 @@ subcriterion,scenario_A,scenario_B,scenario_C,direction,scenario_anchor
 Production Cost,0.90,0.60,0.20,less_is_better,Cost profile per scenario (A: optimized	 B: standard	 C: elevated)
 Expected Profitability,0.95,0.50,0.10,more_is_better,Combined yield-price profile per scenario		
 Financing Needs,0.80,0.60,0.30,less_is_better,Credit dependency profile per scenario		
-Expected Productivity,0.90,0.55,0.15,more_is_better,Climatic efficiency (CE) range per scenario (Wollmann et al. 2013)		
+Expected Productivity,0.90,0.55,0.15,more_is_better,Climatic efficiency (CE) range per scenario (Battisti et al. 2013)		
 Crop Compatibility,0.85,0.70,0.40,more_is_better,Agronomic synergy profile per scenario		
 Soil Impact,0.75,0.60,0.30,less_is_better,Soil conservation profile per scenario		
 Efficient Land Use,1.00,0.80,0.50,more_is_better,Annual area utilization profile per scenario		
