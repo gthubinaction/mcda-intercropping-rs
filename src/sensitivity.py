@@ -6,6 +6,7 @@ Sensitivity analysis for AHP-MAUT models.
 Implements:
     - One-at-a-Time (OAT) sensitivity with proportional redistribution.
     - Monte Carlo simulation with uniform perturbations on criterion weights.
+    - Monte Carlo simulation with uniform perturbations on utility values.
     - Stability metrics (ranking preservation, confidence intervals).
 
 References
@@ -32,20 +33,6 @@ def redistribute_weights(weights: np.ndarray, idx: int,
     """
     Replace weights[idx] with new_value, then proportionally redistribute
     the remaining mass across the other indices so that the total sums to 1.
-
-    Parameters
-    ----------
-    weights : np.ndarray
-        Original weights summing to 1.
-    idx : int
-        Index to modify.
-    new_value : float
-        New value for weights[idx], in [0, 1].
-
-    Returns
-    -------
-    new_weights : np.ndarray
-        Perturbed weights summing to 1.
     """
     weights = np.asarray(weights, dtype=float)
     new_weights = weights.copy()
@@ -64,29 +51,6 @@ def oat_sensitivity(main_weights: np.ndarray,
                     perturbations: list[float] | None = None) -> pd.DataFrame:
     """
     One-at-a-time sensitivity analysis on main criterion weights.
-
-    Each main criterion weight is perturbed by the given percentages, and
-    the remaining main weights are proportionally rescaled to maintain
-    the unit sum. Final sub-criterion weights are recomputed and U is
-    re-evaluated for each scenario.
-
-    Parameters
-    ----------
-    main_weights : np.ndarray
-        Main criterion weights (shape: n_main).
-    local_weights_per_criterion : list[np.ndarray]
-        Local sub-criterion weights for each main criterion.
-    utility_matrix : np.ndarray
-        Utility values (shape: n_subcriteria x n_scenarios).
-    perturbations : list[float], optional
-        Percentage perturbations as fractions. Default: [-0.20, -0.10, 0,
-        +0.10, +0.20].
-
-    Returns
-    -------
-    results : pd.DataFrame
-        Long-format DataFrame with columns: criterion_idx, perturbation,
-        new_weights, U_A, U_B, U_C, ...
     """
     if perturbations is None:
         perturbations = [-0.20, -0.10, 0.0, 0.10, 0.20]
@@ -126,29 +90,7 @@ def monte_carlo_simulation(main_weights: np.ndarray,
                            perturbation_range: float = 0.20,
                            random_seed: int = 42) -> pd.DataFrame:
     """
-    Monte Carlo sensitivity analysis: sample main criterion weights from
-    a uniform distribution around the base values, renormalize, and
-    recompute global utilities for each scenario.
-
-    Parameters
-    ----------
-    main_weights : np.ndarray
-        Base main criterion weights (shape: n_main).
-    local_weights_per_criterion : list[np.ndarray]
-        Local sub-criterion weights for each main criterion.
-    utility_matrix : np.ndarray
-        Utility values (shape: n_subcriteria x n_scenarios).
-    n_iterations : int
-        Number of Monte Carlo samples.
-    perturbation_range : float
-        Maximum perturbation as fraction of base weight (e.g., 0.20 = +/-20%).
-    random_seed : int
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    samples : pd.DataFrame
-        Columns: iteration, w_E, w_A, w_En, w_L, U_A, U_B, U_C, ranking_preserved.
+    Monte Carlo sensitivity analysis on main criterion weights.
     """
     rng = np.random.default_rng(random_seed)
     n_main = len(main_weights)
@@ -195,41 +137,6 @@ def monte_carlo_simulation(main_weights: np.ndarray,
     return pd.DataFrame(records)
 
 
-def summarize_monte_carlo(samples: pd.DataFrame,
-                          scenario_columns: list[str] | None = None
-                          ) -> pd.DataFrame:
-    """
-    Summary statistics for Monte Carlo results.
-
-    Parameters
-    ----------
-    samples : pd.DataFrame
-        Output from monte_carlo_simulation().
-    scenario_columns : list[str], optional
-        Columns to summarize. Default: detect U_* columns.
-
-    Returns
-    -------
-    summary : pd.DataFrame
-        Columns: scenario, mean, std, q025, q500, q975, min, max.
-    """
-    if scenario_columns is None:
-        scenario_columns = [c for c in samples.columns if c.startswith("U_")]
-    rows = []
-    for col in scenario_columns:
-        values = samples[col].values
-        rows.append({
-            "scenario": col.replace("U_", ""),
-            "mean": values.mean(),
-            "std": values.std(ddof=1),
-            "q025": np.percentile(values, 2.5),
-            "q500": np.percentile(values, 50.0),
-            "q975": np.percentile(values, 97.5),
-            "min": values.min(),
-            "max": values.max(),
-        })
-    return pd.DataFrame(rows)
-
 def utility_monte_carlo(final_weights: np.ndarray,
                         utility_matrix: np.ndarray,
                         n_iterations: int = 10000,
@@ -237,6 +144,7 @@ def utility_monte_carlo(final_weights: np.ndarray,
                         random_seed: int = 42) -> pd.DataFrame:
     """
     Monte Carlo sensitivity analysis on the MAUT utility values.
+
     Complements monte_carlo_simulation() (which perturbs criterion weights)
     by stress-testing the author-assigned utility matrix. Each utility value
     is multiplied by an independent uniform factor in
@@ -270,3 +178,27 @@ def utility_monte_carlo(final_weights: np.ndarray,
         records.append(record)
 
     return pd.DataFrame(records)
+
+
+def summarize_monte_carlo(samples: pd.DataFrame,
+                          scenario_columns: list[str] | None = None
+                          ) -> pd.DataFrame:
+    """
+    Summary statistics for Monte Carlo results.
+    """
+    if scenario_columns is None:
+        scenario_columns = [c for c in samples.columns if c.startswith("U_")]
+    rows = []
+    for col in scenario_columns:
+        values = samples[col].values
+        rows.append({
+            "scenario": col.replace("U_", ""),
+            "mean": values.mean(),
+            "std": values.std(ddof=1),
+            "q025": np.percentile(values, 2.5),
+            "q500": np.percentile(values, 50.0),
+            "q975": np.percentile(values, 97.5),
+            "min": values.min(),
+            "max": values.max(),
+        })
+    return pd.DataFrame(rows)
