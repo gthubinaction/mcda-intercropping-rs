@@ -26,7 +26,7 @@ from src.ahp import evaluate_matrix, load_pairwise_matrix
 from src.maut import (apply_exponential_to_matrix, evaluate_scenarios,
                       global_utility)
 from src.sensitivity import (monte_carlo_simulation, oat_sensitivity,
-                             summarize_monte_carlo)
+                             summarize_monte_carlo, utility_monte_carlo)
 from src.visualization import generate_all_figures
 
 DATA_DIR = ROOT / "data"
@@ -89,7 +89,7 @@ def main():
     print(f"{'='*60}")
     baseline = evaluate_scenarios(final_weights, utility_matrix,
                                   scenario_labels=["A", "B", "C"])
-    baseline["published"] = [0.8921, 0.5914, 0.2485]
+    baseline["published"] = [0.8868, 0.5955, 0.2426]
     baseline["difference"] = baseline["global_utility"] - baseline["published"]
     print(baseline.to_string(index=False))
     baseline.to_csv(TABLES_DIR / "maut_baseline.csv", index=False)
@@ -139,6 +139,35 @@ def main():
     mc_samples.to_csv(TABLES_DIR / "monte_carlo_samples.csv", index=False)
     mc_summary.to_csv(TABLES_DIR / "monte_carlo_summary.csv", index=False)
 
+    # Utility Monte Carlo (perturbacao sobre as utilidades do MAUT)
+    print(f"\n{'='*60}")
+    print("Utility Monte Carlo (10,000 iterations, +/- 10% on utilities)")
+    print(f"{'='*60}")
+    umc_10 = utility_monte_carlo(final_weights, utility_matrix,
+                                 n_iterations=10000,
+                                 perturbation_range=0.10,
+                                 random_seed=42)
+    umc_10_summary = summarize_monte_carlo(umc_10)
+    print(umc_10_summary.round(4).to_string(index=False))
+    print(f"  Ranking preserved: "
+          f"{100 * umc_10['ranking_preserved'].mean():.2f}%")
+    umc_10.to_csv(TABLES_DIR / "utility_monte_carlo_10pct_samples.csv", index=False)
+    umc_10_summary.to_csv(TABLES_DIR / "utility_monte_carlo_10pct_summary.csv", index=False)
+
+    print(f"\n{'='*60}")
+    print("Utility Monte Carlo (10,000 iterations, +/- 20% on utilities)")
+    print(f"{'='*60}")
+    umc_20 = utility_monte_carlo(final_weights, utility_matrix,
+                                 n_iterations=10000,
+                                 perturbation_range=0.20,
+                                 random_seed=42)
+    umc_20_summary = summarize_monte_carlo(umc_20)
+    print(umc_20_summary.round(4).to_string(index=False))
+    print(f"  Ranking preserved: "
+          f"{100 * umc_20['ranking_preserved'].mean():.2f}%")
+    umc_20.to_csv(TABLES_DIR / "utility_monte_carlo_20pct_samples.csv", index=False)
+    umc_20_summary.to_csv(TABLES_DIR / "utility_monte_carlo_20pct_summary.csv", index=False)
+    
     # Figures
     print(f"\n{'='*60}")
     print("Generating figures")
