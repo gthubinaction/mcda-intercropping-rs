@@ -7,7 +7,7 @@
 
 Reproducibility package for the paper:
 
-> Silva, C., Siluk, J. C. M., Rediske, G., & Marchezan, T. B. (2026).
+> Silva, C., Siluk, J. C. M., Rediske, G., & Marchesan, T. B. (2026).
 > *Integrated AHP-MAUT Framework for Multicriteria Performance Evaluation
 > of Soybean-Wheat Intercropping in Southern Brazil*.
 > Submitted to *International Transactions in Operational Research*.
