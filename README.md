@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/Code%20License-MIT-blue.svg)](LICENSE)
 [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](LICENSE-DATA)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.placeholder.svg)](https://doi.org/10.5281/zenodo.20362661)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20362661.svg)](https://doi.org/10.5281/zenodo.20362661)
 
 Reproducibility package for the paper: 
 
