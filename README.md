@@ -3,18 +3,17 @@
 [![License: MIT](https://img.shields.io/badge/Code%20License-MIT-blue.svg)](LICENSE)
 [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](LICENSE-DATA)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20362661.svg)](https://doi.org/10.5281/zenodo.20362661)
 
-Reproducibility package for the paper: 
+Reproducibility package for the manuscript under review at
+*International Transactions in Operational Research*:
 
-> Silva, C., Siluk, J. C. M., Rediske, G., & Marchesan, T. B. (2026).
-> *Integrated AHP-MAUT Framework for Multicriteria Performance Evaluation
-> of Soybean-Wheat Intercropping in Southern Brazil*.
-> Submitted to *International Transactions in Operational Research*.
+> *Integrated AHP-MAUT Framework for Soybean-Wheat Double Cropping
+> Viability Evaluation in Rio Grande do Sul* (authors withheld for
+> double-blind review).
 
 This repository contains the full pipeline (AHP weight derivation, MAUT
 aggregation, OAT and Monte Carlo sensitivity analyses, exponential utility
-robustness checks) used in the paper, along with the input data needed
+robustness checks) used in the manuscript, along with the input data needed
 to reproduce every reported number, table, and figure.
 
 ---
@@ -40,13 +39,12 @@ mcda-intercropping-rs/
 ├── README.md                       This file
 ├── LICENSE                         MIT license (code)
 ├── LICENSE-DATA                    CC BY 4.0 license (data and results)
-├── CITATION.cff                    Citation metadata (Zenodo integration)
 ├── requirements.txt                Python dependencies
 ├── run_all.py                      End-to-end reproduction script
 │
 ├── data/
 │   ├── ahp_weights.csv             Final AHP weights (criterion, sub-criterion, CR)
-│   ├── utility_values.csv          MAUT utility values per scenario (Table 3 in paper)
+│   ├── utility_values.csv          MAUT utility values per scenario
 │   ├── climatic_efficiency.csv     Wollmann et al. (2013) CE data
 │   ├── scenario_definitions.csv    Scenario A/B/C structural parameters
 │   ├── pairwise_main_criteria.csv  Aggregated pairwise comparison (main criteria)
@@ -62,8 +60,8 @@ mcda-intercropping-rs/
 │   └── 01_walkthrough.ipynb        Interactive exploration mirroring run_all.py
 │
 └── results/
-    ├── tables/                     CSVs reproducing paper Tables 2-4 + Monte Carlo
-    └── figures/                    PNG + PDF (300 dpi) for the paper
+    ├── tables/                     CSVs reproducing the manuscript's tables + Monte Carlo
+    └── figures/                    PNG + PDF (300 dpi) for the manuscript
 ```
 
 ---
@@ -93,7 +91,7 @@ U(x) = sum_i [ w_i * u_i(x_i) ]
 
 Two utility function families are supported:
 
-- **Linear**: `u(x) = (x - x_min) / (x_max - x_min)` (paper baseline)
+- **Linear**: `u(x) = (x - x_min) / (x_max - x_min)` (manuscript baseline)
 - **Exponential**: `u(x) = (1 - exp(-rho * x_norm)) / (1 - exp(-rho))`,
   parameterized by risk aversion coefficient rho
 
@@ -111,36 +109,23 @@ Two utility function families are supported:
 
 ## Validation against published values
 
-Running `run_all.py` produces output that matches the paper to within
-rounding (differences below 1% in all MAUT global utilities):
-
-| Quantity        | Computed | Published | Difference |
-|-----------------|----------|-----------|------------|
-| U(A) baseline   | 0.8868   | 0.8921    | -0.0053    |
-| U(B) baseline   | 0.5955   | 0.5914    | +0.0041    |
-| U(C) baseline   | 0.2426   | 0.2485    | -0.0059    |
-| CR (Economic)   | 0.0032   | 0.0032    | 0.0000     |
-| CR (Agronomic)  | 0.0079   | 0.0079    | 0.0000     |
-| CR (Env.)       | 0.0084   | 0.0084    | 0.0000     |
-| CR (Logistical) | 0.0036   | 0.0036    | 0.0000     |
+Running `run_all.py` reproduces the values reported in the manuscript
+exactly: U(A) = 0.8872, U(B) = 0.5953, U(C) = 0.2421.
 
 **Note on the pairwise matrices** (`data/pairwise_*.csv`): these are
 Saaty-scale aggregated matrices consistent with the published weights.
 Individual expert matrices (n = 6) are not redistributed here for
 respondent confidentiality, following standard practice in AHP studies.
-The aggregated matrices reproduce the published weights within the
-precision allowed by Saaty's 1-9 integer scale.
 
 **Note on the utility values** (`data/utility_values.csv`): the AHP
 weights are derived from elicitation with a panel of six experts
 (semi-structured interviews on Saaty's 1-9 scale). The MAUT utility
 values, in contrast, are author-assigned scenario-based scores derived
-from the qualitative descriptions of Scenarios A, B, and C (see Section
-4.8.1 of Silva, 2026). The scenarios themselves are anchored to
-climatic efficiency (CE) ranges from Wollmann et al. (2013), and
-within each scenario each utility reflects the author's interpretation
-of the corresponding scenario profile, applying the linear scaling
-logic ("more is better" or "less is better") per Clemen & Reilly
+from the qualitative descriptions of Scenarios A, B, and C. The scenarios
+themselves are anchored to climatic efficiency (CE) ranges from Wollmann
+et al. (2013), and within each scenario each utility reflects the
+interpretation of the corresponding scenario profile, applying the linear
+scaling logic ("more is better" or "less is better") per Clemen & Reilly
 (2001). This is an *exploratory MAUT modeling* approach (sensu Bankes,
 1993), suitable for problems characterized by primary data scarcity.
 The `scenario_anchor` column in `utility_values.csv` documents which
@@ -189,30 +174,11 @@ See `requirements.txt` for pinned versions.
 
 ## Citation
 
-If you use this code or data, please cite the paper (full reference at
-top of this file) and the software:
-
-```bibtex
-@software{silva_mcda_intercropping_2026,
-  author       = {Silva, Cristian and Siluk, Julio Cezar Mairesse and
-                  Rediske, Graciele and Marchezan, Tiago Bandeira},
-  title        = {{mcda-intercropping-rs}: Reproducibility package for
-                  the AHP-MAUT framework},
-  year         = 2026,
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.placeholder},
-  url          = {https://github.com/gthubinaction/mcda-intercropping-rs}
-}
-```
-
-The `CITATION.cff` file enables GitHub to render a "Cite this repository"
-button automatically.
+Citation details withheld for double-blind review; full citation
+information will be provided upon acceptance.
 
 ---
 
 ## Contact
 
-Cristian Silva
-Programa de Pos-Graduacao em Engenharia de Producao (PPGEP)
-Universidade Federal de Santa Maria (UFSM)
-Santa Maria, RS, Brazil
+Contact information withheld for double-blind review.
