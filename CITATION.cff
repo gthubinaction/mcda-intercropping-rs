@@ -1,25 +1,25 @@
 cff-version: 1.2.0
-title: "mcda-intercropping-rs: Reproducibility package for the AHP-MAUT framework"
+title: "mcda-intercropping-rs: Reproducibility package for the AHP-MAUT double cropping framework"
 message: "If you use this software or data, please cite both the software and the associated paper."
 type: software
 authors:
   - given-names: Cristian
-    family-names: Silva
+    family-names: "da Rosa Silva"
     affiliation: "Programa de Pos-Graduacao em Engenharia de Producao (PPGEP), Universidade Federal de Santa Maria (UFSM)"
-    # orcid: "https://orcid.org/0000-0000-0000-0000"  # add ORCID when available
-  - given-names: "Julio Cezar Mairesse"
-    family-names: Siluk
-    affiliation: "Universidade Federal de Santa Maria (UFSM)"
   - given-names: Graciele
     family-names: Rediske
     affiliation: "Universidade Federal de Santa Maria (UFSM)"
+  - given-names: "Julio Cezar Mairesse"
+    family-names: Siluk
+    affiliation: "Universidade Federal de Santa Maria (UFSM)"
   - given-names: "Tiago Bandeira"
-    family-names: Marchezan
+    family-names: Marchesan
     affiliation: "Universidade Federal de Santa Maria (UFSM)"
 repository-code: "https://github.com/gthubinaction/mcda-intercropping-rs"
 license: MIT
 license-url: "https://opensource.org/licenses/MIT"
-version: "1.0.0"
+version: "1.0.2"
+doi: "10.5281/zenodo.20362660"
 date-released: "2026-05-22"
 keywords:
   - multicriteria decision analysis
@@ -27,7 +27,8 @@ keywords:
   - MCDM
   - AHP
   - MAUT
-  - intercropping
+  - exploratory modeling
+  - double cropping
   - soybean-wheat
   - sensitivity analysis
   - Monte Carlo
@@ -35,23 +36,22 @@ keywords:
   - decision support
 abstract: >-
   Reproducibility package containing the full pipeline (AHP weight
-  derivation, MAUT aggregation, OAT and Monte Carlo sensitivity analyses,
-  exponential utility robustness checks) used in the paper "Integrated
-  AHP-MAUT Framework for Multicriteria Performance Evaluation of
-  Soybean-Wheat Intercropping in Southern Brazil", along with input data
-  needed to reproduce every reported number, table, and figure.
+  derivation, MAUT aggregation, OAT sensitivity, weight-based Monte Carlo,
+  utility-value Monte Carlo, and exponential utility robustness checks) used
+  in the paper "Integrated AHP-MAUT Framework for Exploratory Multicriteria
+  Performance Evaluation of Soybean-Wheat Double Cropping in Southern Brazil",
+  along with the input data needed to reproduce every reported number, table,
+  and figure.
 preferred-citation:
   type: article
-  title: "Integrated AHP-MAUT Framework for Multicriteria Performance Evaluation of Soybean-Wheat Intercropping in Southern Brazil"
+  title: "Integrated AHP-MAUT Framework for Exploratory Multicriteria Performance Evaluation of Soybean-Wheat Double Cropping in Southern Brazil"
   authors:
     - given-names: Cristian
-      family-names: Silva
-    - given-names: "Julio Cezar Mairesse"
-      family-names: Siluk
+      family-names: "da Rosa Silva"
     - given-names: Graciele
       family-names: Rediske
+    - given-names: "Julio Cezar Mairesse"
+      family-names: Siluk
     - given-names: "Tiago Bandeira"
-      family-names: Marchezan
+      family-names: Marchesan
   year: 2026
-  journal: "International Transactions in Operational Research"
-  status: "submitted"
