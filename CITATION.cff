@@ -4,7 +4,7 @@ message: "If you use this software or data, please cite both the software and th
 type: software
 authors:
   - given-names: Cristian
-    family-names: "da Rosa Silva"
+    family-names: Silva
     affiliation: "Programa de Pos-Graduacao em Engenharia de Producao (PPGEP), Universidade Federal de Santa Maria (UFSM)"
   - given-names: Graciele
     family-names: Rediske
@@ -19,7 +19,7 @@ repository-code: "https://github.com/gthubinaction/mcda-intercropping-rs"
 license: MIT
 license-url: "https://opensource.org/licenses/MIT"
 version: "1.0.2"
-doi: "10.5281/zenodo.20362660"
+doi: "10.5281/zenodo.20788738"
 date-released: "2026-05-22"
 keywords:
   - multicriteria decision analysis
@@ -47,7 +47,7 @@ preferred-citation:
   title: "Integrated AHP-MAUT Framework for Exploratory Multicriteria Performance Evaluation of Soybean-Wheat Double Cropping in Southern Brazil"
   authors:
     - given-names: Cristian
-      family-names: "da Rosa Silva"
+      family-names: Silva
     - given-names: Graciele
       family-names: Rediske
     - given-names: "Julio Cezar Mairesse"

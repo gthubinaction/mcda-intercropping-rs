@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/Code%20License-MIT-blue.svg)](LICENSE)
 [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](LICENSE-DATA)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20362660.svg)](https://doi.org/10.5281/zenodo.20362660)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20788738.svg)](https://doi.org/10.5281/zenodo.20788738)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
 Reproducibility package for the manuscript:
@@ -207,7 +207,7 @@ If you use this software or data, please cite the archived release:
 
 > Silva, C., Rediske, G., Siluk, J. C. M., Marchesan, T. B. (2026).
 > *mcda-intercropping-rs: Reproducibility package for the AHP–MAUT double
-> cropping framework* (v1.0.2). Zenodo. https://doi.org/10.5281/zenodo.20362660
+> cropping framework* (v1.0.2). Zenodo. https://doi.org/10.5281/zenodo.20788738
 
 Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
 
