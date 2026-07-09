@@ -215,7 +215,7 @@ Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
 
 ## Contact
 
-Corresponding author: Cristian da Rosa Silva — Programa de Pós-Graduação em
+Corresponding author: Cristian Silva — Programa de Pós-Graduação em
 Engenharia de Produção (PPGEP), Universidade Federal de Santa Maria (UFSM),
 Santa Maria, RS, Brazil.
 
