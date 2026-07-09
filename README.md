@@ -2,19 +2,25 @@
 
 [![License: MIT](https://img.shields.io/badge/Code%20License-MIT-blue.svg)](LICENSE)
 [![Data License: CC BY 4.0](https://img.shields.io/badge/Data%20License-CC%20BY%204.0-lightgrey.svg)](LICENSE-DATA)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20362660.svg)](https://doi.org/10.5281/zenodo.20362660)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
-Reproducibility package for the manuscript under review at
-*International Transactions in Operational Research*:
+Reproducibility package for the manuscript:
 
-> *Integrated AHP-MAUT Framework for Soybean-Wheat Double Cropping
-> Viability Evaluation in Rio Grande do Sul* (authors withheld for
-> double-blind review).
+> *Integrated AHP–MAUT Framework for Exploratory Multicriteria Performance
+> Evaluation of Soybean–Wheat Double Cropping in Southern Brazil* —
+> Silva, C., Rediske, G., Siluk, J. C. M., Marchesan, T. B. (2026).
 
 This repository contains the full pipeline (AHP weight derivation, MAUT
-aggregation, OAT and Monte Carlo sensitivity analyses, exponential utility
-robustness checks) used in the manuscript, along with the input data needed
-to reproduce every reported number, table, and figure.
+aggregation, OAT sensitivity, weight-based Monte Carlo, utility-value Monte
+Carlo, and exponential utility robustness checks) used in the manuscript,
+along with the input data needed to reproduce every reported number, table,
+and figure.
+
+> **Note on naming:** the repository slug retains the legacy `intercropping`
+> term for URL, citation, and DOI stability. The system studied is soybean–wheat
+> *double cropping* (sequential cultivation within the same crop year), not
+> intercropping (simultaneous cultivation of two crops in the same field).
 
 ---
 
@@ -37,6 +43,7 @@ Outputs land in `results/tables/` and `results/figures/`.
 mcda-intercropping-rs/
 │
 ├── README.md                       This file
+├── CITATION.cff                    Citation metadata (software + paper)
 ├── LICENSE                         MIT license (code)
 ├── LICENSE-DATA                    CC BY 4.0 license (data and results)
 ├── requirements.txt                Python dependencies
@@ -45,24 +52,31 @@ mcda-intercropping-rs/
 ├── data/
 │   ├── ahp_weights.csv             Final AHP weights (criterion, sub-criterion, CR)
 │   ├── utility_values.csv          MAUT utility values per scenario
-│   ├── climatic_efficiency.csv     Wollmann et al. (2013) CE data
+│   ├── climatic_efficiency.csv     Battisti et al. (2013) CE data
 │   ├── scenario_definitions.csv    Scenario A/B/C structural parameters
-│   ├── pairwise_main_criteria.csv  Aggregated pairwise comparison (main criteria)
 │   └── pairwise_subcriteria.csv    Aggregated pairwise comparison (sub-criteria)
 │
 ├── src/
 │   ├── ahp.py                      AHP eigenvector, CI, CR
 │   ├── maut.py                     Linear and exponential utility aggregation
-│   ├── sensitivity.py              OAT and Monte Carlo
+│   ├── sensitivity.py              OAT, weight Monte Carlo, utility Monte Carlo
 │   └── visualization.py            Publication-quality figures (matplotlib)
 │
 ├── notebooks/
 │   └── 01_walkthrough.ipynb        Interactive exploration mirroring run_all.py
 │
 └── results/
-    ├── tables/                     CSVs reproducing the manuscript's tables + Monte Carlo
+    ├── tables/                     CSVs reproducing the manuscript's tables,
+    │                               weight Monte Carlo, and utility Monte Carlo
     └── figures/                    PNG + PDF (300 dpi) for the manuscript
 ```
+
+The four main-criteria weights (Economic 0.40, Agronomic 0.25, Environmental
+0.20, Logistical/Commercial 0.15) are obtained by **direct assignment**
+validated through panel consensus, not by a pairwise comparison matrix; there
+is therefore no `pairwise_main_criteria.csv`. Only the twelve sub-criteria,
+nested within each main criterion, are derived from aggregated pairwise
+comparisons (`pairwise_subcriteria.csv`).
 
 ---
 
@@ -95,15 +109,24 @@ Two utility function families are supported:
 - **Exponential**: `u(x) = (1 - exp(-rho * x_norm)) / (1 - exp(-rho))`,
   parameterized by risk aversion coefficient rho
 
-### 3. Sensitivity analysis (`src/sensitivity.py`)
+### 3. Sensitivity and robustness analysis (`src/sensitivity.py`)
 
-- **OAT**: each criterion weight is perturbed by +/-10% and +/-20%, with
-  proportional redistribution of the remaining mass. The ranking
-  stability is checked across all perturbations.
-- **Monte Carlo**: 10,000 iterations sampling uniformly from [-20%, +20%]
-  multipliers on each main weight, then renormalizing. Generates 95%
-  confidence intervals for U(A), U(B), U(C) and the empirical proportion
+Four complementary procedures:
+
+- **OAT**: each main criterion weight is perturbed by +/-10% and +/-20%, with
+  proportional redistribution of the remaining mass. Ranking stability is
+  checked across all perturbations.
+- **Weight-based Monte Carlo**: 10,000 iterations sampling uniformly from
+  [-20%, +20%] multipliers on each main weight, then renormalizing. Generates
+  95% confidence intervals for U(A), U(B), U(C) and the empirical proportion
   of iterations preserving the A > B > C ranking.
+- **Utility-value Monte Carlo**: stress-tests the author-assigned utility
+  matrix directly. Each of the twelve utility values per scenario is perturbed
+  by an independent uniform factor (+/-10% and +/-20%, 10,000 iterations each)
+  and clipped to [0, 1], with the AHP weights held fixed.
+- **Exponential utility comparison**: re-evaluates the global utilities under
+  exponential utility with risk-aversion coefficients rho in {0.5, 1.0, 2.0}
+  to test sensitivity to the utility functional form.
 
 ---
 
@@ -112,7 +135,7 @@ Two utility function families are supported:
 Running `run_all.py` reproduces the values reported in the manuscript
 exactly: U(A) = 0.8872, U(B) = 0.5953, U(C) = 0.2421.
 
-**Note on the pairwise matrices** (`data/pairwise_*.csv`): these are
+**Note on the pairwise matrices** (`data/pairwise_subcriteria.csv`): these are
 Saaty-scale aggregated matrices consistent with the published weights.
 Individual expert matrices (n = 6) are not redistributed here for
 respondent confidentiality, following standard practice in AHP studies.
@@ -122,7 +145,7 @@ weights are derived from elicitation with a panel of six experts
 (semi-structured interviews on Saaty's 1-9 scale). The MAUT utility
 values, in contrast, are author-assigned scenario-based scores derived
 from the qualitative descriptions of Scenarios A, B, and C. The scenarios
-themselves are anchored to climatic efficiency (CE) ranges from Wollmann
+themselves are anchored to climatic efficiency (CE) ranges from Battisti
 et al. (2013), and within each scenario each utility reflects the
 interpretation of the corresponding scenario profile, applying the linear
 scaling logic ("more is better" or "less is better") per Clemen & Reilly
@@ -134,10 +157,10 @@ should refine these utilities through primary measurement.
 
 ---
 
-## Key Monte Carlo finding
+## Key robustness findings
 
-Across 10,000 iterations with +/-20% uniform perturbation on each main
-criterion weight:
+**Weight-based Monte Carlo** — 10,000 iterations, +/-20% uniform perturbation
+on each main criterion weight:
 
 | Scenario | Mean  | SD     | 95% CI            |
 |----------|-------|--------|-------------------|
@@ -145,9 +168,14 @@ criterion weight:
 | B        | 0.595 | 0.003  | [0.590, 0.601]    |
 | C        | 0.243 | 0.005  | [0.234, 0.252]    |
 
-The A > B > C ranking is preserved in **100%** of iterations, and the
-95% confidence intervals do not overlap, providing strong evidence of
-ranking stability under weight uncertainty.
+**Utility-value Monte Carlo** — direct perturbation of the twelve author-assigned
+utilities, AHP weights fixed: the A > B > C ranking is preserved in 100% of
+iterations under both +/-10% and +/-20% amplitudes, with non-overlapping 95%
+confidence intervals in every case.
+
+Across all procedures the A > B > C ranking is preserved in **100%** of
+iterations and the 95% confidence intervals do not overlap, providing strong
+evidence of ranking stability under both weight and utility uncertainty.
 
 ---
 
@@ -157,6 +185,7 @@ ranking stability under weight uncertainty.
 - numpy >= 1.24
 - pandas >= 2.0
 - matplotlib >= 3.7
+- jupyter >= 1.0 (for the walkthrough notebook)
 
 See `requirements.txt` for pinned versions.
 
@@ -174,11 +203,20 @@ See `requirements.txt` for pinned versions.
 
 ## Citation
 
-Citation details withheld for double-blind review; full citation
-information will be provided upon acceptance.
+If you use this software or data, please cite the archived release:
+
+> Silva, C., Rediske, G., Siluk, J. C. M., Marchesan, T. B. (2026).
+> *mcda-intercropping-rs: Reproducibility package for the AHP–MAUT double
+> cropping framework* (v1.0.2). Zenodo. https://doi.org/10.5281/zenodo.20362660
+
+Machine-readable metadata is provided in [`CITATION.cff`](CITATION.cff).
 
 ---
 
 ## Contact
 
-Contact information withheld for double-blind review.
+Corresponding author: Cristian da Rosa Silva — Programa de Pós-Graduação em
+Engenharia de Produção (PPGEP), Universidade Federal de Santa Maria (UFSM),
+Santa Maria, RS, Brazil.
+
+For questions about the code or data, please open an issue in this repository.
