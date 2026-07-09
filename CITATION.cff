@@ -14,7 +14,7 @@ authors:
     family-names: Rediske
     affiliation: "Universidade Federal de Santa Maria (UFSM)"
   - given-names: "Tiago Bandeira"
-    family-names: Marchezan
+    family-names: Marchesan
     affiliation: "Universidade Federal de Santa Maria (UFSM)"
 repository-code: "https://github.com/gthubinaction/mcda-intercropping-rs"
 license: MIT
@@ -51,7 +51,7 @@ preferred-citation:
     - given-names: Graciele
       family-names: Rediske
     - given-names: "Tiago Bandeira"
-      family-names: Marchezan
+      family-names: Marchesan
   year: 2026
   journal: "International Transactions in Operational Research"
   status: "submitted"
